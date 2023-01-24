@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object detection</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+
+  <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+</head>
+<body>
+    <a class="a_tag" href="index.html">Back</a>
+<center>
+    <h1>Object Detection</h1>
+    <br>
+    <h3 id="objects" class="object"></h3>
+    <h3 id="status" class="status">Loading</h3>
+</center>
+</body>
+<script>
+    console.log("hi");
+    status1 = "";
+        objects = [];
+        x1 = 0;
+        y1 = 0;
+        height1 = 0;
+        width1 = 0;
+        name1 = "";
+        times=0;
+        function preload() {
+            pic = loadImage("Desk.jpeg");
+        }
+        function draw() {
+            image(pic, 0, 0, 700, 400);
+            noFill();
+            if (status1 == true) {
+                console.log(objects);
+        
+                for(i=0; i<objects.length; i++){
+                    x1 = objects[i].x;
+                    y1 = objects[i].y;
+                    width1 = objects[i].width;
+                    height1 = objects[i].height;
+                    name1=objects[i].label;
+                    confidence=floor(objects[i].confidence*100);
+                    if(times == i){
+                        r=random(0,255);
+                        g=random(0,255);
+                        b=random(0,255);
+                        times=times+1;
+                    }
+                    stroke(r,g,b);
+                    rect(x1, y1, width1, height1);
+                    text(name1+" "+confidence+"% confident", x1+5,y1+15);
+                }
+               
+            }
+        }
+        function setup() {
+            canvas = createCanvas(600, 400);
+            canvas.center();
+            object_detection = ml5.objectDetector('cocossd', loaded)
+            document.getElementById("status").innerHTML = "Detecting objects";
+        }
+        function loaded() {
+            console.log("cocoSSD has loaded");
+            status1 = true;
+            object_detection.detect(pic, gotresults)
+        }
+        function gotresults(error, results) {
+            if (error) {
+                console.log(error);
+            }
+            else {
+                console.log(results);
+                objects = results;
+                document.getElementById("status").innerHTML = "Objects Detected";
+        
+            }
+        }
+        </script>
+</html>
